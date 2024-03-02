@@ -77,6 +77,7 @@ impl CompanyData {
         let mut assigned_sic = None;
         let mut relationship = None;
 
+
         for part in parts {
             match &part {
                 DocumentTree::ValueNode(tag, value) => match tag {
@@ -107,6 +108,9 @@ impl CompanyData {
                     ValueTag::Relationship => {
                         assert!(relationship.is_none());
                         relationship = Some(value.clone());
+                    }
+                    ValueTag::OrganizationName => {
+                        //Unused for now.
                     }
                     _ => panic!("Unexpected: {:?}", &part),
                 },
@@ -716,7 +720,7 @@ pub struct Submission {
     pub registered_entity: Option<bool>,
     pub depositor: Option<Company>,
     pub securitizer: Option<Company>,
-    pub references_429: Option<String>,
+    pub references_429 : Vec<String>,
     pub securitizer_cik: Option<String>,
     pub issuing_entity_cik: Option<String>,
     pub issuing_entity_name: Option<String>,
@@ -772,7 +776,8 @@ impl Submission {
         let mut registered_entity = None;
         let mut depositor = None;
         let mut securitizer = None;
-        let mut references_429 = None;
+        //let mut references_429 = None;
+        let mut references_429 : Vec<String> = Vec::new();
         let mut securitizer_cik = None;
         let mut issuing_entity_cik = None;
         let mut issuing_entity_name = None;
@@ -896,8 +901,7 @@ impl Submission {
                         registered_entity = Some(parse_bool(value));
                     }
                     ValueTag::References429 => {
-                        assert!(references_429.is_none());
-                        references_429 = Some(value.clone());
+                        references_429.push(value.clone());
                     }
                     ValueTag::SecuritizerCik => {
                         assert!(securitizer_cik.is_none());

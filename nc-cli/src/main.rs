@@ -44,7 +44,12 @@ fn main() {
                 let path = file.unwrap().path();
                 println!("{:?}", &path);
 
-                parse_submission(&path).unwrap();
+                let res =parse_submission(&path); //removed unwrap
+                if let Err(err) = res {
+                    println!("{:?}", err)
+
+                }
+
             }
         }
     }
