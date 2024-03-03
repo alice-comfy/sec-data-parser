@@ -8,6 +8,7 @@ pub enum DataType {
     Xml,
     Pdf,
     Xbrl,
+    UnknownBinary,
 }
 
 impl Display for DataType {
@@ -17,6 +18,7 @@ impl Display for DataType {
             DataType::Xml => write!(f, "XML"),
             DataType::Pdf => write!(f, "PDF"),
             DataType::Xbrl => write!(f, "XBRL"),
+            DataType::UnknownBinary => write!(f, "Unknown Binary File (likely graphical)")
         }
     }
 }
@@ -73,7 +75,13 @@ impl TypedData {
                 data_type: DataType::Xbrl,
                 body: DocumentBody::from_string(st.strip_suffix("</XBRL>").unwrap()),
             }
-        } else {
+        } else if st.starts_with("begin 644") {
+            TypedData {
+                data_type: DataType::UnknownBinary,
+                body: DocumentBody::from_string(st),
+            }
+
+        }else {
             TypedData {
                 data_type: DataType::Plaintext,
                 body: DocumentBody::from_string(st),
