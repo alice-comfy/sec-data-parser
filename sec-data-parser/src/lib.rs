@@ -38,6 +38,7 @@ pub fn parse_byte_submission(bytes : &[u8]) -> Option<Submission>  {
     {
         Some(Submission::from_parts(&parts).unwrap())
     } else {
+        println!("{:?}", parse_doc(&mut tokens));
         None
     }
 }
