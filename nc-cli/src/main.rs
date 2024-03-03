@@ -36,6 +36,7 @@ fn main() {
     match opts.subcmd {
         SubCommand::Describe(DescribeCommand { file }) => {
             let submission = parse_submission(&file).unwrap();
+            println!("{:?}", submission.documents[1]);
 
             submission.pretty_print();
         }
