@@ -70,7 +70,7 @@ impl TypedData {
             }
         } else if let Some(st) = st.strip_prefix("<XBRL>") {
             TypedData {
-                data_type: DataType::Pdf,
+                data_type: DataType::Xbrl,
                 body: DocumentBody::from_string(st.strip_suffix("</XBRL>").unwrap()),
             }
         } else {
