@@ -724,6 +724,7 @@ pub struct Submission {
     pub securitizer_cik: Option<String>,
     pub issuing_entity_cik: Option<String>,
     pub issuing_entity_name: Option<String>,
+    pub issuing_entity: Option<String>,
     pub paper: bool,
     pub confirming_copy: bool,
     pub securitizer_file_number: Option<String>,
@@ -781,6 +782,7 @@ impl Submission {
         let mut securitizer_cik = None;
         let mut issuing_entity_cik = None;
         let mut issuing_entity_name = None;
+        let mut issuing_entity: Option<String> = None;
         let mut paper = false;
         let mut confirming_copy = false;
         let mut securitizer_file_number = None;
@@ -915,6 +917,10 @@ impl Submission {
                         assert!(issuing_entity_name.is_none());
                         issuing_entity_name = Some(value.clone());
                     }
+                    ValueTag::IssuingEntity => {
+                        assert!(issuing_entity.is_none());
+                        issuing_entity = Some(value.clone());
+                    }
                     ValueTag::Paper => {
                         paper = true;
                     }
@@ -1039,6 +1045,7 @@ impl Submission {
             securitizer_cik,
             issuing_entity_cik,
             issuing_entity_name,
+            issuing_entity,
             paper,
             confirming_copy,
             securitizer_file_number,

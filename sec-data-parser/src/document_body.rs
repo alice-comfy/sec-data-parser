@@ -8,6 +8,7 @@ pub enum DataType {
     Xml,
     Pdf,
     Xbrl,
+    Html,
     UnknownBinary,
 }
 
@@ -18,6 +19,7 @@ impl Display for DataType {
             DataType::Xml => write!(f, "XML"),
             DataType::Pdf => write!(f, "PDF"),
             DataType::Xbrl => write!(f, "XBRL"),
+            DataType::Html => write!(f, "HTML"),
             DataType::UnknownBinary => write!(f, "Unknown Binary File (likely graphical)")
         }
     }
@@ -78,6 +80,12 @@ impl TypedData {
         } else if st.starts_with("begin 644") {
             TypedData {
                 data_type: DataType::UnknownBinary,
+                body: DocumentBody::from_string(st),
+            }
+
+        }else if st.to_lowercase().starts_with("<") {
+            TypedData {
+                data_type: DataType::Html,
                 body: DocumentBody::from_string(st),
             }
 
