@@ -99,7 +99,7 @@ impl CompanyData {
                     }
                     ValueTag::FiscalYearEnd => {
                         assert!(fiscal_year_end.is_none());
-                        fiscal_year_end = Some(MonthDayPair::parse(value));
+                        fiscal_year_end = MonthDayPair::parse(value);
                     }
                     ValueTag::AssignedSic => {
                         assert!(assigned_sic.is_none());
@@ -709,11 +709,12 @@ pub struct Submission {
     pub action_date: Option<NaiveDate>,
     pub received_date: Option<NaiveDate>,
     pub ma_i_individual: Option<String>,
+    pub rule: Vec<String>,
     pub abs_rule: Option<String>,
     pub period_start: Option<NaiveDate>,
     pub no_quarterly_activity: Option<bool>,
     pub no_annual_activity: Option<bool>,
-    pub abs_asset_class: Option<String>,
+    pub abs_asset_class: Vec<String>,
     pub depositor_cik: Option<String>,
     pub sponsor_cik: Option<String>,
     pub category: Option<String>,
@@ -724,7 +725,7 @@ pub struct Submission {
     pub securitizer_cik: Option<String>,
     pub issuing_entity_cik: Option<String>,
     pub issuing_entity_name: Option<String>,
-    pub issuing_entity: Option<String>,
+    pub issuing_entity: Vec<String>,
     pub paper: bool,
     pub confirming_copy: bool,
     pub securitizer_file_number: Option<String>,
@@ -770,19 +771,21 @@ impl Submission {
         let mut period_start = None;
         let mut no_quarterly_activity = None;
         let mut no_annual_activity = None;
-        let mut abs_asset_class = None;
+        let mut abs_asset_class = Vec::new();
+        let mut abs_sub_asset_class = None;
         let mut depositor_cik = None;
         let mut sponsor_cik = None;
         let mut category = None;
         let mut registered_entity = None;
         let mut depositor = None;
         let mut securitizer = None;
+        let mut rule = Vec::new();
         //let mut references_429 = None;
         let mut references_429 : Vec<String> = Vec::new();
         let mut securitizer_cik = None;
         let mut issuing_entity_cik = None;
         let mut issuing_entity_name = None;
-        let mut issuing_entity: Option<String> = None;
+        let mut issuing_entity: Vec<String> = Vec::new();
         let mut paper = false;
         let mut confirming_copy = false;
         let mut securitizer_file_number = None;
@@ -830,6 +833,9 @@ impl Submission {
                     ValueTag::Period => {
                         assert!(period.is_none());
                         period = Some(parse_date(value));
+                    }
+                    ValueTag::Rule => {
+                        rule.push(value.clone());
                     }
                     ValueTag::GroupMembers => {
                         group_members.push(value.clone());
@@ -883,8 +889,12 @@ impl Submission {
                         no_annual_activity = Some(parse_bool(value));
                     }
                     ValueTag::AbsAssetClass => {
-                        assert!(abs_asset_class.is_none());
-                        abs_asset_class = Some(value.clone());
+                        //assert!(abs_asset_class.is_none()); not needed as it's a vec
+                        abs_asset_class.push(value.clone());
+                    }
+                    ValueTag::AbsSubAssetClass => {
+                        assert!(abs_sub_asset_class.is_none());
+                        abs_sub_asset_class = Some(value.clone());
                     }
                     ValueTag::DepositorCik => {
                         assert!(depositor_cik.is_none());
@@ -918,8 +928,8 @@ impl Submission {
                         issuing_entity_name = Some(value.clone());
                     }
                     ValueTag::IssuingEntity => {
-                        assert!(issuing_entity.is_none());
-                        issuing_entity = Some(value.clone());
+                        
+                        issuing_entity.push(value.clone());
                     }
                     ValueTag::Paper => {
                         paper = true;
@@ -957,7 +967,8 @@ impl Submission {
                     ValueTag::PreviousAccessionNumber => {
                         previous_accession_number = Some(value.clone());
                     }
-                    _ => panic!("Unexpected: {:?}", &part),
+                    //_ => panic!("Unexpected: {:?}", &part),
+                    _ => println!("Unexpected:{:?}" ,&part),
                 },
                 DocumentTree::ContainerNode(tag, parts) => match tag {
                     ContainerTag::Filer => {
@@ -999,8 +1010,41 @@ impl Submission {
                     }
                     ContainerTag::FiledFor => {
                         filed_for.push(Company::from_parts(parts)?);
+                    },
+                    ContainerTag::CompanyData => {
+                        //unimplemented for now
+                    },
+                    ContainerTag::FilingValues => {
+
+                    },
+                    ContainerTag::BusinessAddress => {
+
                     }
-                    _ => unimplemented!("{:?}", tag),
+                    ContainerTag::MailAddress => {
+
+                    },
+                    ContainerTag::AcquiringData => {
+
+                    },
+                    ContainerTag::ClassContract => {
+
+                    }
+                    ContainerTag::FormerCompany => {
+
+                    },
+                    ContainerTag::FormerName => {
+
+                    }, 
+                    ContainerTag::ExistingSeriesAndClassesContracts => {
+
+                    },
+                    ContainerTag::Merger => {
+
+                    },
+                    ContainerTag::MergerSeriesAndClassesContracts => {},
+                    ContainerTag::NewClassesContracts => {},
+                    ContainerTag::NewSeries => {},
+                    _ => println!("{:?}", tag),
                 },
                 _ => panic!("Unexpected: {:?}", &part),
             }
@@ -1017,6 +1061,7 @@ impl Submission {
             documents,
             series_and_classes_contracts_data,
             period,
+            rule: rule,
             issuer,
             group_members,
             subject_company,

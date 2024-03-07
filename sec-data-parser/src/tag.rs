@@ -75,6 +75,7 @@ impl ContainerTag {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ValueTag {
     AbsAssetClass,
+    AbsSubAssetClass,
     AbsRule,
     AccessionNumber,
     Act,
@@ -133,6 +134,7 @@ pub enum ValueTag {
     References429,
     RegisteredEntity,
     Relationship,
+    Rule,
     SecuritizerCik,
     SecuritizerFileNumber,
     Sequence,
@@ -144,6 +146,7 @@ pub enum ValueTag {
     StateOfInforporation,
     Street1,
     Street2,
+    Underwriter,
     Timestamp,
     Type,
     Zip,
@@ -153,6 +156,7 @@ impl ValueTag {
     pub fn parse(tag: &str) -> Result<ValueTag> {
         Ok(match tag {
             "ABS-ASSET-CLASS" => ValueTag::AbsAssetClass,
+            "ABS-SUB-ASSET-CLASS" => ValueTag::AbsSubAssetClass,
             "ABS-RULE" => ValueTag::AbsRule,
             "ACCESSION-NUMBER" => ValueTag::AccessionNumber,
             "ACT" => ValueTag::Act,
@@ -192,7 +196,7 @@ impl ValueTag {
             "IS-FUND-24F2-ELIGIBLE" => ValueTag::IsFund24F2Eligible,
             "ISSUING-ENTITY-CIK" => ValueTag::IssuingEntityCik,
             "ISSUING-ENTITY-NAME" => ValueTag::IssuingEntityName,
-            "ISSUING-ENTITY" => ValueTag::IssuingEntity,
+            "ISSUING_ENTITY" => ValueTag::IssuingEntity,
             "ITEMS" => ValueTag::Items,
             "MA-I_INDIVIDUAL" => ValueTag::MaIIndividual,
             "NO-ANNUAL-ACTIVITY" => ValueTag::NoAnnualActivity,
@@ -213,6 +217,7 @@ impl ValueTag {
             "REFERENCES-429" => ValueTag::References429,
             "REGISTERED-ENTITY" => ValueTag::RegisteredEntity,
             "RELATIONSHIP" => ValueTag::Relationship,
+            "RULE" => ValueTag::Rule,
             "SECURITIZER-CIK" => ValueTag::SecuritizerCik,
             "SECURITIZER-FILE-NUMBER" => ValueTag::SecuritizerFileNumber,
             "SEQUENCE" => ValueTag::Sequence,
@@ -222,6 +227,7 @@ impl ValueTag {
             "SROS" => ValueTag::Sros,
             "STATE" => ValueTag::State,
             "STATE-OF-INCORPORATION" => ValueTag::StateOfInforporation,
+            "UNDERWRITER" => ValueTag::Underwriter,
             "STREET1" => ValueTag::Street1,
             "STREET2" => ValueTag::Street2,
             "TIMESTAMP" => ValueTag::Timestamp,

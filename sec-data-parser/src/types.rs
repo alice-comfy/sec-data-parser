@@ -9,12 +9,16 @@ const DATE_TIME_FORMAT: &str = "%Y%m%d:%H%M%S";
 pub struct MonthDayPair(chrono::Month, u32);
 
 impl MonthDayPair {
-    pub fn parse(st: &str) -> MonthDayPair {
-        let month_n: u32 = st[..2].parse().unwrap();
-        let day: u32 = st[2..].parse().unwrap();
+    pub fn parse(st: &str) -> Option<MonthDayPair> {
+        let month_n: u32 = st[..2].parse().unwrap_or_default();
+        let day: u32 = st[2..].parse().unwrap_or_default();
 
-        let month = Month::from_u32(month_n).unwrap();
-        MonthDayPair(month, day)
+        let month = Month::from_u32(month_n);
+        match month {
+            Some(month) => {Some(MonthDayPair(month, day))},
+            None => {None}
+        }
+        
     }
 }
 
