@@ -477,8 +477,8 @@ impl AcquiringData {
         }
 
         Ok(AcquiringData {
-            series: series.unwrap(),
-            cik: cik.unwrap(),
+            series: series.unwrap_or("missing".to_string()),
+            cik: cik.unwrap_or("error".to_string()),
         })
     }
 }

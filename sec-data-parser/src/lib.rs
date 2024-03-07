@@ -32,7 +32,15 @@ pub fn parse_submission(path: &Path) -> Result<Submission> {
 //function for processing bytes. This is usefulf or our internal usecases, as we unpack and parse filings without permanently saving the NC files to save storage.
 pub fn parse_byte_submission(bytes : &[u8]) -> Option<Submission>  {
     let st = std::str::from_utf8(bytes).unwrap().to_string();
-    let mut tokens = VecDeque::from(tokenize_submission(st.clone()).unwrap());
+    let mut tokenize = tokenize_submission(st.clone());
+    let mut tokens;
+    match tokenize {
+        Ok(t) => {tokens = VecDeque::from(t);}
+        Err(e) => {
+            println!{"{:?}", e};
+            return None; 
+    }
+    }
 
     if let Ok(DocumentTree::ContainerNode(ContainerTag::Submission, parts)) = parse_doc(&mut tokens)
     {
